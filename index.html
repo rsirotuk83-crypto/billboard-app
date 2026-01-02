@@ -57,7 +57,6 @@
         function buyStars() {
             const text = document.getElementById('new-main-text').value;
             if (!text) return alert("Введіть текст!");
-            // Відправляємо боту дію та текст
             tg.sendData(`action:buy_stars|text:${text}`);
         }
 
@@ -70,13 +69,13 @@
                 validUntil: Math.floor(Date.now() / 1000) + 600,
                 messages: [{
                     address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL",
-                    amount: "1000000000" // 1.0 TON
+                    amount: "1000000000", // 1.0 TON
+                    payload: btoa(unescape(encodeURIComponent(text))) // Кодуємо текст для блокчейну
                 }]
             };
             try {
                 await tonConnectUI.sendTransaction(transaction);
-                // Після успіху в ідеалі треба повідомити сервер, але для початку Stars простіше
-                alert("Транзакція надіслана! Текст оновиться після підтвердження мережею.");
+                alert("Транзакція надіслана! Текст оновиться автоматично після підтвердження мережею (до 30 сек).");
             } catch(e) { alert("Скасовано"); }
         }
 
