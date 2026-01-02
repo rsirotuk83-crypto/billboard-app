@@ -12,15 +12,15 @@
         .card { border: 2px solid var(--neon); border-radius: 20px; padding: 20px; margin-bottom: 15px; background: #000; box-shadow: 0 0 15px rgba(0,242,255,0.1); }
         .vip { border-color: var(--pink); box-shadow: 0 0 20px rgba(255,0,229,0.2); }
         .jackpot { font-size: 32px; color: var(--gold); text-shadow: 0 0 10px var(--gold); margin: 5px 0; font-weight: 800; }
-        .btn { background: white; color: black; border: none; padding: 14px; border-radius: 50px; font-weight: bold; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; cursor: pointer; transition: 0.3s; }
-        .btn:active { transform: scale(0.95); }
+        .btn { background: white; color: black; border: none; padding: 14px; border-radius: 50px; font-weight: bold; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); opacity: 0.8; }
         .input-text { width: 92%; padding: 12px; border-radius: 12px; border: 1px solid #333; background: #111; color: white; margin-bottom: 10px; outline: none; }
         .leaderboard { text-align: left; background: #0a0a0a; border-radius: 15px; padding: 15px; margin-top: 20px; border: 1px solid #222; }
         .leader-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #111; font-size: 13px; }
         .label { font-size: 10px; color: #555; text-transform: uppercase; display: block; margin-bottom: 5px; }
         #ton-connect-button { display: flex; justify-content: center; margin-bottom: 20px; }
-        .share-section { margin-top: 20px; padding-bottom: 30px; }
-        .btn-share { background: transparent; color: var(--neon); border: 2px solid var(--neon); }
+        .share-section { margin-top: 25px; padding-bottom: 20px; }
+        .btn-share { background: transparent; color: var(--neon); border: 2px solid var(--neon); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
     </style>
 </head>
 <body>
@@ -73,11 +73,11 @@
         document.getElementById('new-vip-text').placeholder = t.pv;
         document.getElementById('new-main-text').placeholder = t.ps;
 
-        // Ініціалізація TonConnect з налаштуванням повернення в Telegram
+        // Виправлення TonConnect: додано twaReturnUrl для запобігання скасуванню транзакції
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://rsirotuk83-crypto.github.io/billboard-app/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button',
-            twaReturnUrl: 'https://t.me/billboard_wbcb_bot' 
+            twaReturnUrl: 'https://t.me/billboard_wbcb_bot'
         });
 
         async function updateData() {
@@ -98,14 +98,13 @@
                 return tonConnectUI.openModal();
             }
             const text = document.getElementById('new-vip-text').value;
-            if (!text) return tg.showAlert("Enter your message!");
+            if (!text) return tg.showAlert("Enter text!");
 
             const currentJackpot = parseFloat(document.getElementById('jackpot-val').innerText);
-            // Кодуємо повідомлення для блокчейну
             const comment = btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (m, p1) => String.fromCharCode('0x' + p1)));
 
             const transaction = {
-                validUntil: Math.floor(Date.now() / 1000) + 300,
+                validUntil: Math.floor(Date.now() / 1000) + 360,
                 messages: [{
                     address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL",
                     amount: (currentJackpot * 10**9).toString(),
@@ -115,9 +114,9 @@
 
             try {
                 await tonConnectUI.sendTransaction(transaction);
-                tg.showAlert("Success! Wait for blockchain confirmation.");
+                tg.showAlert("Transaction sent! Wait for update.");
             } catch(e) {
-                console.error(e);
+                console.error("Pay Error:", e);
             }
         }
 
@@ -128,9 +127,9 @@
         }
 
         function shareProject() {
-            // Використовуємо нативний метод Telegram для пересилання
-            const url = `https://t.me/share/url?url=${encodeURIComponent(BOT_LINK)}&text=${encodeURIComponent(t.st)}`;
-            tg.openTelegramLink(url);
+            // Виправлений метод Share через пряме посилання Telegram
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(BOT_LINK)}&text=${encodeURIComponent(t.st)}`;
+            tg.openTelegramLink(shareUrl);
         }
 
         setInterval(updateData, 5000);
