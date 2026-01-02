@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WBCB Billboard</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <style>
+        :root { --neon: #00f2ff; --pink: #ff00e5; }
+        body { background: #050505; color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 15px; text-align: center; }
+        .card { border: 2px solid var(--neon); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 0 15px var(--neon); background: rgba(0,0,0,0.8); }
+        .vip { border-color: var(--pink); box-shadow: 0 0 20px var(--pink); }
+        .jackpot { font-size: 24px; color: #fbff00; text-shadow: 0 0 10px #fbff00; margin: 10px 0; }
+        .btn { background: white; color: black; border: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        #ton-connect-button { display: flex; justify-content: center; margin-bottom: 20px; }
+        .timer { font-family: monospace; color: #aaa; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div id="ton-connect-button"></div>
+
+    <div class="card vip">
+        <div style="color: var(--pink); font-size: 12px; letter-spacing: 2px;">👑 HEGEMONY (TON)</div>
+        <div class="jackpot">💰 Jackpot: <span id="jackpot-val">0.00</span> TON</div>
+        <div id="vip-text" style="font-size: 22px; margin: 15px 0;">Завантаження...</div>
+        <div class="timer">Тримається: <span id="timer-val">00:00:00</span></div>
+        <button class="btn" style="background: var(--pink); color: white;" onclick="payVip()">ПЕРЕБИТИ СТАВКУ (TON)</button>
+    </div>
+
+    <div class="card">
+        <div style="color: var(--neon); font-size: 12px; letter-spacing: 2px;">📢 BILLBOARD (STARS)</div>
+        <div id="main-text" style="font-size: 18px; margin: 15px 0;">Тут твоя реклама...</div>
+        <button class="btn" onclick="buyStars()">ЗАХОПИТИ ЗА $1 (STARS)</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://yourname.github.io/billboard-app/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
+
+        async function updateData() {
+            const res = await fetch('https://your-railway-app.up.railway.app/status');
+            const data = await res.json();
+            document.getElementById('vip-text').innerText = data.vip_text;
+            document.getElementById('main-text').innerText = data.main_text;
+            document.getElementById('jackpot-val').innerText = data.jackpot;
+            // Логіка таймера тут...
+        }
+
+        function buyStars() { tg.sendData("action:buy_stars"); }
+
+        async function payVip() {
+            const transaction = {
+                validUntil: Math.floor(Date.now() / 1000) + 60,
+                messages: [{ address: "ТВІЙ_ГАМАНЕЦЬ", amount: "2000000000" }] // 2 TON
+            };
+            try { await tonConnectUI.sendTransaction(transaction); } catch(e) {}
+        }
+
+        setInterval(updateData, 5000);
+        updateData();
+    </script>
+</body>
+</html>
