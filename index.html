@@ -8,89 +8,44 @@
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         :root { --neon: #00f2ff; --pink: #ff00e5; --gold: #fbff00; }
-        body { background: #050505; color: white; font-family: 'Inter', system-ui, sans-serif; margin: 0; padding: 15px; text-align: center; line-height: 1.5; }
-        .card { border: 2px solid var(--neon); border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,242,255,0.2); background: linear-gradient(145deg, #0a0a0a, #000); position: relative; }
-        .vip { border: 3px solid var(--pink); box-shadow: 0 0 30px rgba(255,0,229,0.3); }
-        .jackpot { font-size: 36px; color: var(--gold); text-shadow: 0 0 15px var(--gold); margin: 10px 0; font-weight: 800; }
-        .btn { background: white; color: black; border: none; padding: 16px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; transition: 0.3s; margin-top: 10px; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-        .input-text { width: 90%; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #111; color: white; margin-bottom: 12px; outline: none; font-size: 16px; }
-        #ton-connect-button { display: flex; justify-content: center; margin-bottom: 25px; }
-        .status-tag { font-size: 10px; background: #222; padding: 4px 10px; border-radius: 10px; color: #888; letter-spacing: 1px; }
-        
-        #rules-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; box-sizing: border-box; }
-        .rules-content { background: #111; border: 1px solid var(--neon); padding: 25px; border-radius: 20px; text-align: left; max-width: 500px; margin: auto; }
+        body { background: #050505; color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 15px; text-align: center; }
+        .card { border: 2px solid var(--neon); border-radius: 20px; padding: 20px; margin-bottom: 15px; background: #000; box-shadow: 0 0 15px rgba(0,242,255,0.1); }
+        .vip { border-color: var(--pink); box-shadow: 0 0 20px rgba(255,0,229,0.2); }
+        .jackpot { font-size: 32px; color: var(--gold); text-shadow: 0 0 10px var(--gold); margin: 5px 0; font-weight: 800; }
+        .btn { background: white; color: black; border: none; padding: 14px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+        .input-text { width: 92%; padding: 12px; border-radius: 12px; border: 1px solid #333; background: #111; color: white; margin-bottom: 10px; outline: none; }
+        .leaderboard { text-align: left; background: #0a0a0a; border-radius: 15px; padding: 15px; border: 1px solid #222; margin-top: 20px; }
+        .leader-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #111; font-size: 13px; }
+        .label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        #ton-connect-button { display: flex; justify-content: center; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div id="ton-connect-button"></div>
 
     <div class="card vip">
-        <span class="status-tag" id="t-vip-label">👑 WORLD DOMINATION</span>
+        <span class="label">👑 Global Hegemony</span>
         <div class="jackpot" id="jackpot-val">1.00 TON</div>
-        <div id="vip-text" style="font-size: 22px; margin: 15px 0; font-weight: 600; min-height: 1.2em;">...</div>
+        <div id="vip-text" style="font-size: 20px; margin: 10px 0; font-weight: 600;">...</div>
         <input type="text" id="new-vip-text" class="input-text">
-        <button class="btn" style="background: var(--pink); color: white;" id="t-btn-vip" onclick="payVip()"></button>
+        <button class="btn" style="background: var(--pink); color: white;" id="t-btn-vip" onclick="payVip()">Capture Throne</button>
     </div>
 
     <div class="card">
-        <span class="status-tag" id="t-stars-label">📢 PUBLIC BROADCAST</span>
-        <div id="main-text" style="font-size: 18px; margin: 15px 0; color: #ccc;">...</div>
+        <span class="label">📢 Public Billboard</span>
+        <div id="main-text" style="font-size: 16px; margin: 10px 0; color: #ccc;">...</div>
         <input type="text" id="new-main-text" class="input-text">
-        <button class="btn" id="t-btn-stars" onclick="buyStars()"></button>
+        <button class="btn" id="t-btn-stars" onclick="buyStars()">Buy (50 Stars)</button>
     </div>
 
-    <div style="display: flex; gap: 10px;">
-        <button class="btn" style="background: transparent; color: var(--neon); border: 1px solid var(--neon);" id="t-btn-share" onclick="shareApp()"></button>
-        <button class="btn" style="background: transparent; color: white; border: 1px solid #444;" id="t-btn-rules" onclick="toggleRules(true)"></button>
-    </div>
-
-    <div id="rules-modal">
-        <div class="rules-content">
-            <h2 id="t-r-title">Rules</h2>
-            <div id="t-r-body" style="color: #bbb; font-size: 14px;"></div>
-            <button class="btn" onclick="toggleRules(false)" style="margin-top:20px;">I UNDERSTAND</button>
-        </div>
+    <div class="leaderboard">
+        <span class="label" style="margin-bottom: 10px;">🏆 Recent Kings</span>
+        <div id="leader-list"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // Automatic Language & UI adaptation
-        const userLang = tg.initDataUnsafe.user?.language_code || 'en';
-        const i18n = {
-            en: {
-                vip: "👑 GLOBAL HEGEMONY", stars: "📢 PUBLIC AD",
-                btnVip: "Seize the Throne", btnStars: "Buy Airtime (50 Stars)",
-                btnShare: "Share My Fame", btnRules: "Manual",
-                vipPl: "Your legendary message...", starsPl: "Your advertisement...",
-                rTitle: "Billboard Manual",
-                rBody: "1. Pay TON to replace the TOP message. 2. Each bid must be +1 TON higher. 3. Stars ad is instant and global for 50 Stars."
-            },
-            uk: {
-                vip: "👑 СВІТОВА ГЕГЕМОНІЯ", stars: "📢 ПУБЛІЧНИЙ ЕФІР",
-                btnVip: "Захопити Трон", btnStars: "Купити ефір (50 Stars)",
-                btnShare: "Хизуватися", btnRules: "Як це працює?",
-                vipPl: "Твоє легендарне послання...", starsPl: "Твоя реклама...",
-                rTitle: "Інструкція",
-                rBody: "1. Сплати TON, щоб змінити головний текст. 2. Кожна наступна ставка має бути на 1 TON вищою. 3. Реклама за Stars оновлюється миттєво."
-            }
-        };
-
-        const t = i18n[userLang] || i18n['en'];
-        
-        // Populate UI
-        document.getElementById('t-vip-label').innerText = t.vip;
-        document.getElementById('t-stars-label').innerText = t.stars;
-        document.getElementById('t-btn-vip').innerText = t.btnVip;
-        document.getElementById('t-btn-stars').innerText = t.btnStars;
-        document.getElementById('t-btn-share').innerText = t.btnShare;
-        document.getElementById('t-btn-rules').innerText = t.btnRules;
-        document.getElementById('new-vip-text').placeholder = t.vipPl;
-        document.getElementById('new-main-text').placeholder = t.starsPl;
-        document.getElementById('t-r-title').innerText = t.rTitle;
-        document.getElementById('t-r-body').innerHTML = t.rBody;
+        let lastVip = "";
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://rsirotuk83-crypto.github.io/billboard-app/tonconnect-manifest.json',
@@ -101,41 +56,50 @@
             try {
                 const res = await fetch('https://billboard-bot-production.up.railway.app/status');
                 const data = await res.json();
+                
+                // Якщо змінився король - робимо вібро-відгук
+                if (lastVip !== "" && lastVip !== data.vip_text) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+                lastVip = data.vip_text;
+
                 document.getElementById('vip-text').innerText = data.vip_text;
                 document.getElementById('main-text').innerText = data.main_text;
                 document.getElementById('jackpot-val').innerText = data.jackpot.toFixed(2) + " TON";
+                
+                const list = document.getElementById('leader-list');
+                list.innerHTML = data.history.map(item => `
+                    <div class="leader-item">
+                        <span class="leader-name">${item.text}</span>
+                        <span class="leader-price">${item.amount.toFixed(1)} TON</span>
+                    </div>
+                `).join('');
             } catch(e) {}
         }
 
-        function toggleRules(show) { document.getElementById('rules-modal').style.display = show ? 'block' : 'none'; }
-        
-        function buyStars() {
-            const text = document.getElementById('new-main-text').value;
-            if (!text) return tg.HapticFeedback.notificationOccurred('error');
-            tg.sendData(`action:buy_stars|text:${text}`);
-        }
-
         async function payVip() {
-            if (!tonConnectUI.connected) return alert("Connect Wallet!");
+            tg.HapticFeedback.impactOccurred('heavy');
+            if (!tonConnectUI.connected) return tg.showAlert("Connect Wallet!");
             const text = document.getElementById('new-vip-text').value;
-            if (!text) return;
+            if (!text) return tg.showAlert("Enter message!");
 
             const comment = btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
-
             const transaction = {
                 validUntil: Math.floor(Date.now() / 1000) + 600,
                 messages: [{
                     address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL",
-                    amount: "1000000000",
+                    amount: (parseFloat(document.getElementById('jackpot-val').innerText) * 10**9).toString(),
                     payload: comment 
                 }]
             };
             try { await tonConnectUI.sendTransaction(transaction); } catch(e) {}
         }
 
-        function shareApp() {
-            const botUrl = "https://t.me/my_billboard_wbcb_bot";
-            tg.openTelegramLink(`https://t.me/share/url?url=${botUrl}&text=${encodeURIComponent("I just conquered the World Billboard! Try to beat me! 🚀")}`);
+        function buyStars() {
+            tg.HapticFeedback.impactOccurred('medium');
+            const text = document.getElementById('new-main-text').value;
+            if (!text) return;
+            tg.sendData(`action:buy_stars|text:${text}`);
         }
 
         setInterval(updateData, 5000);
