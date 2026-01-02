@@ -1,45 +1,44 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WBCB Billboard Global</title>
+    <title>WBCB World Billboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         :root { --neon: #00f2ff; --pink: #ff00e5; }
-        body { background: #050505; color: white; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 15px; text-align: center; }
-        .card { border: 2px solid var(--neon); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 0 15px var(--neon); background: rgba(0,0,0,1); position: relative; overflow: hidden; }
+        body { background: #050505; color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 15px; text-align: center; }
+        .card { border: 2px solid var(--neon); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 0 15px var(--neon); background: black; }
         .vip { border: 3px solid var(--pink); box-shadow: 0 0 25px var(--pink); }
         .jackpot { font-size: 32px; color: #fbff00; text-shadow: 0 0 10px #fbff00; margin: 10px 0; font-weight: bold; }
-        .btn { background: white; color: black; border: none; padding: 15px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
-        .btn:active { transform: scale(0.98); opacity: 0.8; }
-        .share-btn { background: transparent; color: var(--neon); border: 1px solid var(--neon); margin-top: 20px; }
-        .input-text { width: 90%; padding: 12px; border-radius: 10px; border: 1px solid #444; background: #111; color: white; margin-bottom: 10px; outline: none; font-size: 16px; }
+        .btn { background: white; color: black; border: none; padding: 15px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+        .input-text { width: 90%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #111; color: white; margin-bottom: 10px; outline: none; }
         #ton-connect-button { display: flex; justify-content: center; margin-bottom: 20px; }
-        .lang-hint { font-size: 10px; color: #666; margin-bottom: 10px; text-transform: uppercase; }
+        .footer { font-size: 10px; color: #555; margin-top: 20px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
     <div id="ton-connect-button"></div>
-    <div class="lang-hint">Supports all languages 🌍 Всі мови підтримуються</div>
 
     <div class="card vip">
-        <div style="color: var(--pink); font-size: 12px; letter-spacing: 2px; font-weight: bold;">👑 GLOBAL HEGEMONY (TON)</div>
-        <div class="jackpot">💰 <span id="jackpot-val">0.00</span> TON</div>
-        <div id="vip-text" style="font-size: 20px; margin: 15px 0; font-weight: 500;">Loading...</div>
-        <input type="text" id="new-vip-text" class="input-text" placeholder="Your message for the world...">
+        <div style="color: var(--pink); font-size: 12px; font-weight: bold; letter-spacing: 2px;">👑 GLOBAL HEGEMONY</div>
+        <div class="jackpot"><span id="jackpot-val">1.00</span> TON</div>
+        <div id="vip-text" style="font-size: 20px; margin: 15px 0; font-style: italic;">Loading...</div>
+        <input type="text" id="new-vip-text" class="input-text" placeholder="Your global message...">
         <button class="btn" style="background: var(--pink); color: white;" onclick="payVip()">Capture Throne</button>
     </div>
 
     <div class="card">
-        <div style="color: var(--neon); font-size: 12px; letter-spacing: 2px; font-weight: bold;">📢 PUBLIC BILLBOARD (STARS)</div>
+        <div style="color: var(--neon); font-size: 12px; font-weight: bold; letter-spacing: 2px;">📢 PUBLIC AD (STARS)</div>
         <div id="main-text" style="font-size: 18px; margin: 15px 0;">Updating...</div>
-        <input type="text" id="new-main-text" class="input-text" placeholder="Global Ad (50 Stars)...">
-        <button class="btn" onclick="buyStars()">Buy Airtime</button>
+        <input type="text" id="new-main-text" class="input-text" placeholder="Your ad (50 Stars)...">
+        <button class="btn" onclick="buyStars()">Buy Billboard Space</button>
     </div>
 
-    <button class="btn share-btn" onclick="shareApp()">🔗 Share with Friends</button>
+    <button class="btn" style="background: transparent; color: var(--neon); border: 1px solid var(--neon);" onclick="shareApp()">🔗 Share Billboard</button>
+    
+    <div class="footer">WBCB NETWORK • AUTOMATED DECENTRALIZED AD</div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -56,22 +55,22 @@
                 const data = await res.json();
                 document.getElementById('vip-text').innerText = data.vip_text;
                 document.getElementById('main-text').innerText = data.main_text;
-                document.getElementById('jackpot-val').innerText = data.jackpot.toFixed(2);
-            } catch(e) { console.error("Update error:", e); }
+                document.getElementById('jackpot-val').innerText = data.jackpot.toFixed(2) + " TON";
+            } catch(e) { console.error(e); }
         }
 
         function buyStars() {
             const text = document.getElementById('new-main-text').value;
-            if (!text) return alert("Please enter text!");
+            if (!text) return alert("Enter message!");
             tg.sendData(`action:buy_stars|text:${text}`);
         }
 
         async function payVip() {
-            if (!tonConnectUI.connected) return alert("Connect Wallet First!");
+            if (!tonConnectUI.connected) return alert("Please connect wallet!");
             const text = document.getElementById('new-vip-text').value;
-            if (!text) return alert("Enter your message!");
+            if (!text) return alert("Enter message!");
 
-            // Кодування для міжнародних символів (Unicode)
+            // Unicode-safe encoding
             const comment = btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
 
             const transaction = {
@@ -84,14 +83,12 @@
             };
             try {
                 await tonConnectUI.sendTransaction(transaction);
-                alert("Success! Global Billboard will update in 15-30s.");
-            } catch(e) { alert("Transaction Cancelled"); }
+                alert("Transaction sent! Updating in 30s...");
+            } catch(e) { alert("Cancelled"); }
         }
 
         function shareApp() {
-            const shareText = "I'm on the WBCB Global Billboard! Check my message! 🚀";
-            const botUrl = "https://t.me/wbcb_billboard_bot"; // ЗАМІНИ НА ЮЗЕРНЕЙМ СВОГО БОТА
-            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(botUrl)}&text=${encodeURIComponent(shareText)}`);
+            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/my_billboard_wbcb_bot&text=Check out this Global Billboard! 🚀`);
         }
 
         setInterval(updateData, 5000);
