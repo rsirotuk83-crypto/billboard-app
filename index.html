@@ -43,15 +43,13 @@
 
         async function updateData() {
             try {
-                // Використовуємо твою підтверджену адресу Railway
                 const res = await fetch('https://billboard-bot-production.up.railway.app/status');
-                if (!res.ok) throw new Error('Network response was not ok');
                 const data = await res.json();
                 document.getElementById('vip-text').innerText = data.vip_text;
                 document.getElementById('main-text').innerText = data.main_text;
                 document.getElementById('jackpot-val').innerText = data.jackpot.toFixed(2);
             } catch(e) {
-                console.log("Сервер ще прокидається...");
+                console.log("Оновлення даних...");
             }
         }
 
@@ -63,18 +61,17 @@
             const transaction = {
                 validUntil: Math.floor(Date.now() / 1000) + 60,
                 messages: [{
-                    address: "ВСТАВ_СЮДИ_АДРЕСУ_СВОГО_TON_ГАМАНЦЯ", // Наприклад: EQ...
+                    address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL",
                     amount: "1000000000" // 1.0 TON
                 }]
             };
             try {
                 await tonConnectUI.sendTransaction(transaction);
             } catch(e) {
-                alert("Транзакція не вдалася");
+                alert("Скасовано");
             }
         }
 
-        // Оновлюємо дані кожні 5 секунд
         setInterval(updateData, 5000);
         updateData();
     </script>
