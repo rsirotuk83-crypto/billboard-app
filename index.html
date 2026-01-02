@@ -9,20 +9,19 @@
     <style>
         :root { --neon: #00f2ff; --pink: #ff00e5; --gold: #fbff00; }
         body { background: #050505; color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 15px; text-align: center; }
-        .card { border: 2px solid var(--neon); border-radius: 20px; padding: 20px; margin-bottom: 15px; background: #000; box-shadow: 0 0 15px rgba(0,242,255,0.1); position: relative; }
+        .card { border: 2px solid var(--neon); border-radius: 20px; padding: 20px; margin-bottom: 15px; background: #000; }
         .vip { border-color: var(--pink); box-shadow: 0 0 20px rgba(255,0,229,0.2); }
         .jackpot { font-size: 32px; color: var(--gold); text-shadow: 0 0 10px var(--gold); margin: 5px 0; font-weight: 800; }
-        .btn { background: white; color: black; border: none; padding: 14px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+        .btn { background: white; color: black; border: none; padding: 14px; border-radius: 50px; font-weight: bold; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
         .input-text { width: 92%; padding: 12px; border-radius: 12px; border: 1px solid #333; background: #111; color: white; margin-bottom: 10px; outline: none; }
-        .leaderboard { text-align: left; background: #0a0a0a; border-radius: 15px; padding: 15px; border: 1px solid #222; margin-top: 20px; }
+        .leaderboard { text-align: left; background: #0a0a0a; border-radius: 15px; padding: 15px; margin-top: 20px; }
         .leader-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #111; font-size: 13px; }
-        .label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .label { font-size: 10px; color: #555; text-transform: uppercase; display: block; margin-bottom: 5px; }
         #ton-connect-button { display: flex; justify-content: center; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div id="ton-connect-button"></div>
-
     <div class="card vip">
         <span class="label" id="l-vip">👑 HEGEMONY</span>
         <div class="jackpot" id="jackpot-val">1.00 TON</div>
@@ -30,14 +29,12 @@
         <input type="text" id="new-vip-text" class="input-text">
         <button class="btn" style="background: var(--pink); color: white;" id="b-vip" onclick="payVip()"></button>
     </div>
-
     <div class="card">
         <span class="label" id="l-stars">📢 PUBLIC AD</span>
         <div id="main-text" style="font-size: 16px; margin: 10px 0; color: #ccc;">...</div>
         <input type="text" id="new-main-text" class="input-text">
         <button class="btn" id="b-stars" onclick="buyStars()"></button>
     </div>
-
     <div class="leaderboard">
         <span class="label" id="l-kings">🏆 RECENT KINGS</span>
         <div id="leader-list"></div>
@@ -46,27 +43,25 @@
     <script>
         const tg = window.Telegram.WebApp;
         const lang = tg.initDataUnsafe.user?.language_code || 'en';
-
-        const translations = {
-            en: { vip: "👑 HEGEMONY", stars: "📢 PUBLIC AD", kings: "🏆 RECENT KINGS", bVip: "Capture Throne", bStars: "Buy (50 Stars)", pVip: "Your message...", pStars: "Your ad..." },
-            uk: { vip: "👑 ГЕГЕМОНІЯ", stars: "📢 ПУБЛІЧНА РЕКЛАМА", kings: "🏆 ОСТАННІ КОРОЛІ", bVip: "Захопити Трон", bStars: "Купити (50 Stars)", pVip: "Твій текст...", pStars: "Твоя реклама..." },
-            es: { vip: "👑 HEGEMONÍA", stars: "📢 ANUNCIO PÚBLICO", kings: "🏆 REYES RECIENTES", bVip: "Capturar Trono", bStars: "Comprar (50 Stars)", pVip: "Tu mensaje...", pStars: "Tu anuncio..." }
+        const trans = {
+            en: {v:"👑 HEGEMONY", s:"📢 PUBLIC AD", k:"🏆 RECENT KINGS", bv:"Capture Throne", bs:"Buy (50 Stars)", pv:"Message...", ps:"Ad..."},
+            uk: {v:"👑 ГЕГЕМОНІЯ", s:"📢 ПУБЛІЧНА РЕКЛАМА", k:"🏆 ОСТАННІ КОРОЛІ", bv:"Захопити трон", bs:"Купити (50 Stars)", pv:"Повідомлення...", ps:"Реклама..."},
+            zh: {v:"👑 霸权", s:"📢 公共广告", k:"🏆 最近的国王", bv:"夺取王位", bs:"购买 (50 Stars)", pv:"你的消息...", ps:"你的广告..."},
+            es: {v:"👑 HEGEMONÍA", s:"📢 ANUNCIO PÚBLICO", k:"🏆 REYES RECIENTES", bv:"Capturar Trono", bs:"Comprar (50 Stars)", pv:"Tu mensaje...", ps:"Tu anuncio..."},
+            hi: {v:"👑 आधिपत्य", s:"📢 सार्वजनिक विज्ञापन", k:"🏆 हाल के राजा", bv:"सिंहासन जीतें", bs:"खरीदें (50 Stars)", pv:"आपका संदेश...", ps:"आपका विज्ञापन..."},
+            ar: {v:"👑 الهيمنة", s:"📢 إعلان عام", k:"🏆 الملوك الأخيرون", bv:"الاستيلاء على العرش", bs:"شراء (50 Stars)", pv:"رسالتك...", ps:"إعلانك..."},
+            pt: {v:"👑 HEGEMONIA", s:"📢 ANÚNCIO PÚBLICO", k:"🏆 REIS RECENTES", bv:"Capturar Trono", bs:"Comprar (50 Stars)", pv:"Sua mensagem...", ps:"Seu anúncio..."},
+            fr: {v:"👑 HÉGÉMONIE", s:"📢 PUB PUBLIQUE", k:"🏆 DERNIERS ROIS", bv:"Prendre le trône", bs:"Acheter (50 Stars)", pv:"Votre message...", ps:"Votre pub..."},
+            de: {v:"👑 HEGEMONIE", s:"📢 ÖFFENTLICHE ANZEIGE", k:"🏆 JÜNGSTE KÖNIGE", bv:"Thron erobern", bs:"Kaufen (50 Stars)", pv:"Deine Nachricht...", ps:"Deine Anzeige..."},
+            ja: {v:"👑 覇権", s:"📢 公共広告", k:"🏆 最近の王", bv:"王座を奪う", bs:"購入 (50 Stars)", pv:"メッセージ...", ps:"広告..."},
+            el: {v:"👑 ΗΓΕΜΟΝΙΑ", s:"📢 ΔΗΜΟΣΙΑ ΔΙΑΦΗΜΙΣΗ", k:"🏆 ΠΡΟΣΦΑΤΟΙ ΒΑΣΙΛΙΑΔΕΣ", bv:"Κατάληψη Θρόνου", bs:"Αγορά (50 Stars)", pv:"Το μήνυμά σας...", ps:"Η διαφήμισή σας..."}
         };
+        const t = trans[lang] || trans['en'];
+        document.getElementById('l-vip').innerText = t.v; document.getElementById('l-stars').innerText = t.s; document.getElementById('l-kings').innerText = t.k;
+        document.getElementById('b-vip').innerText = t.bv; document.getElementById('b-stars').innerText = t.bs;
+        document.getElementById('new-vip-text').placeholder = t.pv; document.getElementById('new-main-text').placeholder = t.ps;
 
-        const t = translations[lang] || translations['en'];
-        document.getElementById('l-vip').innerText = t.vip;
-        document.getElementById('l-stars').innerText = t.stars;
-        document.getElementById('l-kings').innerText = t.kings;
-        document.getElementById('b-vip').innerText = t.bVip;
-        document.getElementById('b-stars').innerText = t.bStars;
-        document.getElementById('new-vip-text').placeholder = t.pVip;
-        document.getElementById('new-main-text').placeholder = t.pStars;
-
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://rsirotuk83-crypto.github.io/billboard-app/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button'
-        });
-
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({manifestUrl: 'https://rsirotuk83-crypto.github.io/billboard-app/tonconnect-manifest.json', buttonRootId: 'ton-connect-button'});
         async function updateData() {
             try {
                 const res = await fetch('https://billboard-bot-production.up.railway.app/status');
@@ -74,41 +69,21 @@
                 document.getElementById('vip-text').innerText = data.vip_text;
                 document.getElementById('main-text').innerText = data.main_text;
                 document.getElementById('jackpot-val').innerText = data.jackpot.toFixed(2) + " TON";
-                
-                const list = document.getElementById('leader-list');
-                list.innerHTML = data.history.map(item => `
-                    <div class="leader-item">
-                        <span>${item.text}</span>
-                        <span style="color:var(--gold)">${item.amount.toFixed(1)} TON</span>
-                    </div>
-                `).join('');
+                document.getElementById('leader-list').innerHTML = data.history.map(item => `<div class="leader-item"><span>${item.text}</span><span style="color:var(--gold)">${item.amount.toFixed(1)} TON</span></div>`).join('');
             } catch(e) {}
         }
-
         async function payVip() {
             if (!tonConnectUI.connected) return tg.showAlert("Connect Wallet!");
-            const text = document.getElementById('new-vip-text').value;
-            if (!text) return;
-            const comment = btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
-            const transaction = {
-                validUntil: Math.floor(Date.now() / 1000) + 600,
-                messages: [{
-                    address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL",
-                    amount: (parseFloat(document.getElementById('jackpot-val').innerText) * 10**9).toString(),
-                    payload: comment 
-                }]
-            };
+            const text = document.getElementById('new-vip-text').value; if (!text) return;
+            const comment = btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (m, p1) => String.fromCharCode('0x' + p1)));
+            const transaction = { validUntil: Math.floor(Date.now() / 1000) + 600, messages: [{ address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL", amount: (parseFloat(document.getElementById('jackpot-val').innerText) * 10**9).toString(), payload: comment }] };
             try { await tonConnectUI.sendTransaction(transaction); } catch(e) {}
         }
-
         function buyStars() {
-            const text = document.getElementById('new-main-text').value;
-            if (!text) return;
+            const text = document.getElementById('new-main-text').value; if (!text) return;
             tg.sendData(`action:buy_stars|text:${text}`);
         }
-
-        setInterval(updateData, 5000);
-        updateData();
+        setInterval(updateData, 5000); updateData();
     </script>
 </body>
 </html>
