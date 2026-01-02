@@ -3,55 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WBCB Ultra Global Billboard</title>
+    <title>WBCB World Billboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        :root { --neon: #00f2ff; --pink: #ff00e5; }
-        body { background: #050505; color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 15px; text-align: center; }
-        .card { border: 2px solid var(--neon); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 0 15px var(--neon); background: black; }
-        .vip { border: 3px solid var(--pink); box-shadow: 0 0 25px var(--pink); }
-        .jackpot { font-size: 32px; color: #fbff00; text-shadow: 0 0 10px #fbff00; margin: 10px 0; font-weight: bold; }
-        .btn { background: white; color: black; border: none; padding: 15px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
-        .btn:active { transform: scale(0.95); }
-        .input-text { width: 90%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #111; color: white; margin-bottom: 10px; outline: none; }
-        #ton-connect-button { display: flex; justify-content: center; margin-bottom: 20px; }
-        .footer { font-size: 10px; color: #444; margin-top: 20px; }
+        :root { --neon: #00f2ff; --pink: #ff00e5; --gold: #fbff00; }
+        body { background: #050505; color: white; font-family: 'Inter', system-ui, sans-serif; margin: 0; padding: 15px; text-align: center; line-height: 1.5; }
+        .card { border: 2px solid var(--neon); border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,242,255,0.2); background: linear-gradient(145deg, #0a0a0a, #000); position: relative; }
+        .vip { border: 3px solid var(--pink); box-shadow: 0 0 30px rgba(255,0,229,0.3); }
+        .jackpot { font-size: 36px; color: var(--gold); text-shadow: 0 0 15px var(--gold); margin: 10px 0; font-weight: 800; }
+        .btn { background: white; color: black; border: none; padding: 16px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; transition: 0.3s; margin-top: 10px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+        .input-text { width: 90%; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #111; color: white; margin-bottom: 12px; outline: none; font-size: 16px; }
+        #ton-connect-button { display: flex; justify-content: center; margin-bottom: 25px; }
+        .status-tag { font-size: 10px; background: #222; padding: 4px 10px; border-radius: 10px; color: #888; letter-spacing: 1px; }
         
-        #rules-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; padding: 20px; box-sizing: border-box; }
-        .rules-content { text-align: left; background: #111; border: 1px solid var(--neon); padding: 20px; border-radius: 15px; line-height: 1.4; font-size: 14px; }
+        #rules-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; box-sizing: border-box; }
+        .rules-content { background: #111; border: 1px solid var(--neon); padding: 25px; border-radius: 20px; text-align: left; max-width: 500px; margin: auto; }
     </style>
 </head>
 <body>
     <div id="ton-connect-button"></div>
 
     <div class="card vip">
-        <div id="t-hegemony" style="color: var(--pink); font-size: 12px; font-weight: bold; letter-spacing: 2px;">👑 HEGEMONY</div>
-        <div class="jackpot"><span id="jackpot-val">1.00</span> TON</div>
-        <div id="vip-text" style="font-size: 20px; margin: 15px 0; font-style: italic;">...</div>
+        <span class="status-tag" id="t-vip-label">👑 WORLD DOMINATION</span>
+        <div class="jackpot" id="jackpot-val">1.00 TON</div>
+        <div id="vip-text" style="font-size: 22px; margin: 15px 0; font-weight: 600; min-height: 1.2em;">...</div>
         <input type="text" id="new-vip-text" class="input-text">
-        <button class="btn" id="t-btn-capture" style="background: var(--pink); color: white;" onclick="payVip()"></button>
+        <button class="btn" style="background: var(--pink); color: white;" id="t-btn-vip" onclick="payVip()"></button>
     </div>
 
     <div class="card">
-        <div id="t-public" style="color: var(--neon); font-size: 12px; font-weight: bold; letter-spacing: 2px;">📢 BILLBOARD</div>
-        <div id="main-text" style="font-size: 18px; margin: 15px 0;">...</div>
+        <span class="status-tag" id="t-stars-label">📢 PUBLIC BROADCAST</span>
+        <div id="main-text" style="font-size: 18px; margin: 15px 0; color: #ccc;">...</div>
         <input type="text" id="new-main-text" class="input-text">
-        <button class="btn" id="t-btn-buy" onclick="buyStars()"></button>
+        <button class="btn" id="t-btn-stars" onclick="buyStars()"></button>
     </div>
 
     <div style="display: flex; gap: 10px;">
-        <button class="btn" id="t-btn-share" style="background: transparent; color: var(--neon); border: 1px solid var(--neon);" onclick="shareApp()"></button>
-        <button class="btn" id="t-btn-rules" style="background: transparent; color: white; border: 1px solid #444;" onclick="toggleRules(true)"></button>
+        <button class="btn" style="background: transparent; color: var(--neon); border: 1px solid var(--neon);" id="t-btn-share" onclick="shareApp()"></button>
+        <button class="btn" style="background: transparent; color: white; border: 1px solid #444;" id="t-btn-rules" onclick="toggleRules(true)"></button>
     </div>
-
-    <div class="footer">WBCB NETWORK • GLOBAL ADVERTISING</div>
 
     <div id="rules-modal">
         <div class="rules-content">
-            <h2 id="t-rules-title"></h2>
-            <div id="t-rules-body"></div>
-            <button class="btn" onclick="toggleRules(false)" style="margin-top:20px;">OK</button>
+            <h2 id="t-r-title">Rules</h2>
+            <div id="t-r-body" style="color: #bbb; font-size: 14px;"></div>
+            <button class="btn" onclick="toggleRules(false)" style="margin-top:20px;">I UNDERSTAND</button>
         </div>
     </div>
 
@@ -59,48 +57,40 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const lang = tg.initDataUnsafe.user?.language_code || 'en';
-
+        // Automatic Language & UI adaptation
+        const userLang = tg.initDataUnsafe.user?.language_code || 'en';
         const i18n = {
             en: {
-                hegemony: "👑 GLOBAL HEGEMONY", public: "📢 PUBLIC AD", capture: "Capture Throne", 
-                buy: "Buy Ad (50 Stars)", share: "🔗 Share", rules: "📜 Rules",
-                vipPl: "Your message...", mainPl: "Your ad...", rTitle: "Rules",
-                rBody: "1. Pay TON to set message. 2. Higher bid wins. 3. Stars ad is fixed price."
+                vip: "👑 GLOBAL HEGEMONY", stars: "📢 PUBLIC AD",
+                btnVip: "Seize the Throne", btnStars: "Buy Airtime (50 Stars)",
+                btnShare: "Share My Fame", btnRules: "Manual",
+                vipPl: "Your legendary message...", starsPl: "Your advertisement...",
+                rTitle: "Billboard Manual",
+                rBody: "1. Pay TON to replace the TOP message. 2. Each bid must be +1 TON higher. 3. Stars ad is instant and global for 50 Stars."
             },
             uk: {
-                hegemony: "👑 ГЛОБАЛЬНА ГЕГЕМОНІЯ", public: "📢 ПУБЛІЧНА РЕКЛАМА", capture: "Захопити трон", 
-                buy: "Купити (50 Stars)", share: "🔗 Поділитись", rules: "📜 Правила",
-                vipPl: "Твоє послання...", mainPl: "Твоя реклама...", rTitle: "Правила",
-                rBody: "1. Плати TON за текст. 2. Кожна ставка вище. 3. Stars - фіксована ціна."
-            },
-            es: {
-                hegemony: "👑 HEGEMONÍA GLOBAL", public: "📢 ANUNCIO PÚBLICO", capture: "Capturar Trono", 
-                buy: "Comprar (50 Stars)", share: "🔗 Compartir", rules: "📜 Reglas",
-                vipPl: "Tu mensaje...", mainPl: "Tu anuncio...", rTitle: "Reglas",
-                rBody: "1. Paga TON para el texto. 2. Oferta más alta gana. 3. Stars es precio fijo."
-            },
-            zh: {
-                hegemony: "👑 全球霸权", public: "📢 公共广告", capture: "夺取王座", 
-                buy: "购买 (50 Stars)", share: "🔗 分享", rules: "📜 规则",
-                vipPl: "您的留言...", mainPl: "您的广告...", rTitle: "规则",
-                rBody: "1. 支付 TON 设置消息。 2. 出价高者得。 3. Stars 广告价格固定。"
+                vip: "👑 СВІТОВА ГЕГЕМОНІЯ", stars: "📢 ПУБЛІЧНИЙ ЕФІР",
+                btnVip: "Захопити Трон", btnStars: "Купити ефір (50 Stars)",
+                btnShare: "Хизуватися", btnRules: "Як це працює?",
+                vipPl: "Твоє легендарне послання...", starsPl: "Твоя реклама...",
+                rTitle: "Інструкція",
+                rBody: "1. Сплати TON, щоб змінити головний текст. 2. Кожна наступна ставка має бути на 1 TON вищою. 3. Реклама за Stars оновлюється миттєво."
             }
         };
 
-        const t = i18n[lang] || i18n['en'];
-
-        // Apply translations
-        document.getElementById('t-hegemony').innerText = t.hegemony;
-        document.getElementById('t-public').innerText = t.public;
-        document.getElementById('t-btn-capture').innerText = t.capture;
-        document.getElementById('t-btn-buy').innerText = t.buy;
-        document.getElementById('t-btn-share').innerText = t.share;
-        document.getElementById('t-btn-rules').innerText = t.rules;
+        const t = i18n[userLang] || i18n['en'];
+        
+        // Populate UI
+        document.getElementById('t-vip-label').innerText = t.vip;
+        document.getElementById('t-stars-label').innerText = t.stars;
+        document.getElementById('t-btn-vip').innerText = t.btnVip;
+        document.getElementById('t-btn-stars').innerText = t.btnStars;
+        document.getElementById('t-btn-share').innerText = t.btnShare;
+        document.getElementById('t-btn-rules').innerText = t.btnRules;
         document.getElementById('new-vip-text').placeholder = t.vipPl;
-        document.getElementById('new-main-text').placeholder = t.mainPl;
-        document.getElementById('t-rules-title').innerText = t.rTitle;
-        document.getElementById('t-rules-body').innerText = t.rBody;
+        document.getElementById('new-main-text').placeholder = t.starsPl;
+        document.getElementById('t-r-title').innerText = t.rTitle;
+        document.getElementById('t-r-body').innerHTML = t.rBody;
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://rsirotuk83-crypto.github.io/billboard-app/tonconnect-manifest.json',
@@ -121,24 +111,31 @@
         
         function buyStars() {
             const text = document.getElementById('new-main-text').value;
-            if (!text) return;
+            if (!text) return tg.HapticFeedback.notificationOccurred('error');
             tg.sendData(`action:buy_stars|text:${text}`);
         }
 
         async function payVip() {
-            if (!tonConnectUI.connected) return;
+            if (!tonConnectUI.connected) return alert("Connect Wallet!");
             const text = document.getElementById('new-vip-text').value;
             if (!text) return;
+
             const comment = btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+
             const transaction = {
                 validUntil: Math.floor(Date.now() / 1000) + 600,
-                messages: [{ address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL", amount: "1000000000", payload: comment }]
+                messages: [{
+                    address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL",
+                    amount: "1000000000",
+                    payload: comment 
+                }]
             };
             try { await tonConnectUI.sendTransaction(transaction); } catch(e) {}
         }
 
         function shareApp() {
-            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/my_billboard_wbcb_bot&text=${encodeURIComponent(t.vipPl)}`);
+            const botUrl = "https://t.me/my_billboard_wbcb_bot";
+            tg.openTelegramLink(`https://t.me/share/url?url=${botUrl}&text=${encodeURIComponent("I just conquered the World Billboard! Try to beat me! 🚀")}`);
         }
 
         setInterval(updateData, 5000);
