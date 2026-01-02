@@ -65,18 +65,21 @@
             const text = document.getElementById('new-vip-text').value;
             if (!text) return alert("Введіть текст!");
 
+            // Кодуємо текст так, щоб TON гаманці його зрозуміли як коментар
+            const comment = btoa(unescape(encodeURIComponent(text)));
+
             const transaction = {
                 validUntil: Math.floor(Date.now() / 1000) + 600,
                 messages: [{
                     address: "UQCa_nSo4WIgb6vSm5IRmuuVSdl9c9JD-pOqA8ybK6TjMQpL",
-                    amount: "1000000000", // 1.0 TON
-                    payload: btoa(unescape(encodeURIComponent(text))) // Кодуємо текст для блокчейну
+                    amount: "1000000000",
+                    payload: comment 
                 }]
             };
             try {
                 await tonConnectUI.sendTransaction(transaction);
-                alert("Транзакція надіслана! Текст оновиться автоматично після підтвердження мережею (до 30 сек).");
-            } catch(e) { alert("Скасовано"); }
+                alert("Транзакція відправлена! Очікуйте оновлення.");
+            } catch(e) { alert("Помилка або скасовано"); }
         }
 
         setInterval(updateData, 5000);
