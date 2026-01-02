@@ -17,6 +17,11 @@
         .input-text { width: 90%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #111; color: white; margin-bottom: 10px; outline: none; }
         #ton-connect-button { display: flex; justify-content: center; margin-bottom: 20px; }
         
+        /* Language Switcher */
+        .lang-box { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 10px; font-size: 12px; }
+        .lang-link { color: #666; cursor: pointer; text-decoration: none; }
+        .lang-link.active { color: var(--neon); font-weight: bold; }
+
         /* Rules Modal */
         #rules-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; padding: 20px; box-sizing: border-box; overflow-y: auto; }
         .rules-content { text-align: left; background: #111; border: 1px solid var(--neon); padding: 20px; border-radius: 15px; line-height: 1.6; }
@@ -25,42 +30,99 @@
     </style>
 </head>
 <body>
+    <div class="lang-box">
+        <span class="lang-link active" id="lang-en" onclick="setLang('en')">EN</span>
+        <span class="lang-link" id="lang-ua" onclick="setLang('ua')">UA</span>
+    </div>
+
     <div id="ton-connect-button"></div>
 
     <div class="card vip">
-        <div style="color: var(--pink); font-size: 12px; font-weight: bold; letter-spacing: 2px;">👑 GLOBAL HEGEMONY</div>
+        <div id="label-hegemony" style="color: var(--pink); font-size: 12px; font-weight: bold; letter-spacing: 2px;">👑 GLOBAL HEGEMONY</div>
         <div class="jackpot"><span id="jackpot-val">1.00</span> TON</div>
         <div id="vip-text" style="font-size: 20px; margin: 15px 0; font-style: italic;">Loading...</div>
         <input type="text" id="new-vip-text" class="input-text" placeholder="Your global message...">
-        <button class="btn" style="background: var(--pink); color: white;" onclick="payVip()">Capture Throne</button>
+        <button class="btn" id="btn-capture" style="background: var(--pink); color: white;" onclick="payVip()">Capture Throne</button>
     </div>
 
     <div class="card">
-        <div style="color: var(--neon); font-size: 12px; font-weight: bold; letter-spacing: 2px;">📢 PUBLIC AD (STARS)</div>
+        <div id="label-public" style="color: var(--neon); font-size: 12px; font-weight: bold; letter-spacing: 2px;">📢 PUBLIC AD (STARS)</div>
         <div id="main-text" style="font-size: 18px; margin: 15px 0;">Updating...</div>
         <input type="text" id="new-main-text" class="input-text" placeholder="Your ad (50 Stars)...">
-        <button class="btn" onclick="buyStars()">Buy Billboard Space</button>
+        <button class="btn" id="btn-buy" onclick="buyStars()">Buy Billboard Space</button>
     </div>
 
     <div style="display: flex; gap: 10px;">
-        <button class="btn" style="background: transparent; color: var(--neon); border: 1px solid var(--neon);" onclick="shareApp()">🔗 Share</button>
-        <button class="btn" style="background: transparent; color: white; border: 1px solid #444;" onclick="toggleRules(true)">📜 Rules</button>
+        <button class="btn" id="btn-share" style="background: transparent; color: var(--neon); border: 1px solid var(--neon);" onclick="shareApp()">🔗 Share</button>
+        <button class="btn" id="btn-rules" style="background: transparent; color: white; border: 1px solid #444;" onclick="toggleRules(true)">📜 Rules</button>
     </div>
 
     <div id="rules-modal">
-        <div class="rules-content">
-            <span class="close-rules" onclick="toggleRules(false)">CLOSE ✕</span>
-            <h2>Billboard Rules</h2>
-            <p><strong>1. Global Hegemony (TON):</strong> To change the main text, you must pay the current price in TON. Each new payment must exceed the previous one. The current price is shown on the screen.</p>
-            <p><strong>2. Public Ad (Stars):</strong> This is a flat-rate advertising space. Pay 50 Stars to display your message to everyone. Every new payment replaces the previous one.</p>
-            <p><strong>3. Processing:</strong> TON transactions are verified via blockchain. It may take 15-60 seconds to update after your payment is confirmed.</p>
-            <p><strong>4. Content:</strong> Please avoid illegal or harmful content. The system is decentralized, but let's keep it professional!</p>
-        </div>
+        <div class="rules-content" id="rules-text">
+            </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        let currentLang = 'en';
+        const translations = {
+            en: {
+                hegemony: "👑 GLOBAL HEGEMONY",
+                public: "📢 PUBLIC AD (STARS)",
+                btnCapture: "Capture Throne",
+                btnBuy: "Buy Billboard Space",
+                btnShare: "🔗 Share",
+                btnRules: "📜 Rules",
+                vipPlaceholder: "Your global message...",
+                mainPlaceholder: "Your ad (50 Stars)...",
+                rulesTitle: "Billboard Rules",
+                rulesBody: `
+                    <p><strong>1. TON Hegemony:</strong> Pay the price in TON to set the main text. Each payment must be higher.</p>
+                    <p><strong>2. Stars Ad:</strong> Fixed 50 Stars per message. Replaces previous ad.</p>
+                    <p><strong>3. Time:</strong> TON updates take 30-60s after blockchain confirmation.</p>
+                `
+            },
+            ua: {
+                hegemony: "👑 ГЛОБАЛЬНА ГЕГЕМОНІЯ",
+                public: "📢 ПУБЛІЧНА РЕКЛАМА (STARS)",
+                btnCapture: "Захопити Трон",
+                btnBuy: "Купити місце на борді",
+                btnShare: "🔗 Поділитись",
+                btnRules: "📜 Правила",
+                vipPlaceholder: "Твоє глобальне послання...",
+                mainPlaceholder: "Твоя реклама (50 Stars)...",
+                rulesTitle: "Правила Білборда",
+                rulesBody: `
+                    <p><strong>1. TON Гегемонія:</strong> Сплатіть ціну в TON, щоб встановити текст. Кожна ставка має бути вищою.</p>
+                    <p><strong>2. Stars Реклама:</strong> Фіксовано 50 Stars. Кожна нова оплата замінює попередню.</p>
+                    <p><strong>3. Час:</strong> Оновлення TON займає 30-60с після підтвердження блокчейном.</p>
+                `
+            }
+        };
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-link').forEach(el => el.classList.remove('active'));
+            document.getElementById('lang-' + lang).classList.add('active');
+
+            const t = translations[lang];
+            document.getElementById('label-hegemony').innerText = t.hegemony;
+            document.getElementById('label-public').innerText = t.public;
+            document.getElementById('btn-capture').innerText = t.btnCapture;
+            document.getElementById('btn-buy').innerText = t.btnBuy;
+            document.getElementById('btn-share').innerText = t.btnShare;
+            document.getElementById('btn-rules').innerText = t.btnRules;
+            document.getElementById('new-vip-text').placeholder = t.vipPlaceholder;
+            document.getElementById('new-main-text').placeholder = t.mainPlaceholder;
+            
+            document.getElementById('rules-text').innerHTML = `
+                <span class="close-rules" onclick="toggleRules(false)">${lang === 'ua' ? 'ЗАКРИТИ' : 'CLOSE'} ✕</span>
+                <h2>${t.rulesTitle}</h2>
+                ${t.rulesBody}
+            `;
+        }
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://rsirotuk83-crypto.github.io/billboard-app/tonconnect-manifest.json',
@@ -83,14 +145,14 @@
 
         function buyStars() {
             const text = document.getElementById('new-main-text').value;
-            if (!text) return alert("Enter message!");
+            if (!text) return alert(currentLang === 'ua' ? "Введіть текст!" : "Enter message!");
             tg.sendData(`action:buy_stars|text:${text}`);
         }
 
         async function payVip() {
-            if (!tonConnectUI.connected) return alert("Please connect wallet!");
+            if (!tonConnectUI.connected) return alert(currentLang === 'ua' ? "Підключіть гаманець!" : "Connect wallet!");
             const text = document.getElementById('new-vip-text').value;
-            if (!text) return alert("Enter message!");
+            if (!text) return alert(currentLang === 'ua' ? "Введіть текст!" : "Enter message!");
 
             const comment = btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
 
@@ -104,13 +166,14 @@
             };
             try {
                 await tonConnectUI.sendTransaction(transaction);
-            } catch(e) { alert("Cancelled"); }
+            } catch(e) { }
         }
 
         function shareApp() {
-            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/my_billboard_wbcb_bot&text=Check out the Global Billboard! 🚀`);
+            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/my_billboard_wbcb_bot&text=${encodeURIComponent(currentLang === 'ua' ? 'Поглянь на цей глобальний білборд! 🚀' : 'Check out the Global Billboard! 🚀')}`);
         }
 
+        setLang('en');
         setInterval(updateData, 5000);
         updateData();
     </script>
