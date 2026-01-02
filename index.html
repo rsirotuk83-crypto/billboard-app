@@ -12,10 +12,16 @@
         .card { border: 2px solid var(--neon); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 0 15px var(--neon); background: black; }
         .vip { border: 3px solid var(--pink); box-shadow: 0 0 25px var(--pink); }
         .jackpot { font-size: 32px; color: #fbff00; text-shadow: 0 0 10px #fbff00; margin: 10px 0; font-weight: bold; }
-        .btn { background: white; color: black; border: none; padding: 15px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+        .btn { background: white; color: black; border: none; padding: 15px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
+        .btn:active { transform: scale(0.95); }
         .input-text { width: 90%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #111; color: white; margin-bottom: 10px; outline: none; }
         #ton-connect-button { display: flex; justify-content: center; margin-bottom: 20px; }
-        .footer { font-size: 10px; color: #555; margin-top: 20px; letter-spacing: 1px; }
+        
+        /* Rules Modal */
+        #rules-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        .rules-content { text-align: left; background: #111; border: 1px solid var(--neon); padding: 20px; border-radius: 15px; line-height: 1.6; }
+        .rules-content h2 { color: var(--neon); margin-top: 0; }
+        .close-rules { color: var(--pink); font-weight: bold; cursor: pointer; float: right; }
     </style>
 </head>
 <body>
@@ -36,9 +42,21 @@
         <button class="btn" onclick="buyStars()">Buy Billboard Space</button>
     </div>
 
-    <button class="btn" style="background: transparent; color: var(--neon); border: 1px solid var(--neon);" onclick="shareApp()">🔗 Share Billboard</button>
-    
-    <div class="footer">WBCB NETWORK • AUTOMATED DECENTRALIZED AD</div>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn" style="background: transparent; color: var(--neon); border: 1px solid var(--neon);" onclick="shareApp()">🔗 Share</button>
+        <button class="btn" style="background: transparent; color: white; border: 1px solid #444;" onclick="toggleRules(true)">📜 Rules</button>
+    </div>
+
+    <div id="rules-modal">
+        <div class="rules-content">
+            <span class="close-rules" onclick="toggleRules(false)">CLOSE ✕</span>
+            <h2>Billboard Rules</h2>
+            <p><strong>1. Global Hegemony (TON):</strong> To change the main text, you must pay the current price in TON. Each new payment must exceed the previous one. The current price is shown on the screen.</p>
+            <p><strong>2. Public Ad (Stars):</strong> This is a flat-rate advertising space. Pay 50 Stars to display your message to everyone. Every new payment replaces the previous one.</p>
+            <p><strong>3. Processing:</strong> TON transactions are verified via blockchain. It may take 15-60 seconds to update after your payment is confirmed.</p>
+            <p><strong>4. Content:</strong> Please avoid illegal or harmful content. The system is decentralized, but let's keep it professional!</p>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -48,6 +66,10 @@
             manifestUrl: 'https://rsirotuk83-crypto.github.io/billboard-app/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button'
         });
+
+        function toggleRules(show) {
+            document.getElementById('rules-modal').style.display = show ? 'block' : 'none';
+        }
 
         async function updateData() {
             try {
@@ -70,7 +92,6 @@
             const text = document.getElementById('new-vip-text').value;
             if (!text) return alert("Enter message!");
 
-            // Unicode-safe encoding
             const comment = btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
 
             const transaction = {
@@ -83,12 +104,11 @@
             };
             try {
                 await tonConnectUI.sendTransaction(transaction);
-                alert("Transaction sent! Updating in 30s...");
             } catch(e) { alert("Cancelled"); }
         }
 
         function shareApp() {
-            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/my_billboard_wbcb_bot&text=Check out this Global Billboard! 🚀`);
+            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/my_billboard_wbcb_bot&text=Check out the Global Billboard! 🚀`);
         }
 
         setInterval(updateData, 5000);
